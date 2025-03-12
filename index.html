@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Images to PPT</title>
+</head>
+<body>
+    <h2>Upload WhatsApp Images to Generate PPT</h2>
+    <input type="file" id="imageUpload" multiple accept="image/*">
+    <button onclick="uploadImages()">Generate PPT</button>
+    <p id="status"></p>
+
+    <script>
+        async function uploadImages() {
+            const input = document.getElementById('imageUpload');
+            if (!input.files.length) {
+                alert("Please select images first.");
+                return;
+            }
+
+            let formData = new FormData();
+            for (let i = 0; i < input.files.length; i++) {
+                formData.append("images", input.files[i]);
+            }
+
+            document.getElementById("status").innerText = "Uploading...";
+            
+            const response = await fetch("https://your-backend-url.onrender.com/upload", {
+                method: "POST",
+                body: formData
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "WhatsApp_Images_Presentation.pptx";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                document.getElementById("status").innerText = "✅ PPT Downloaded!";
+            } else {
+                document.getElementById("status").innerText = "❌ Failed to generate PPT";
+            }
+        }
+    </script>
+</body>
+</html>
